@@ -16,17 +16,20 @@ groupnames = args.groupnames
 
 ec2 = boto3.resource('ec2')
 
-#find id matches
-sgi = ec2.security_groups.filter( Filters = [
-    {'Name': 'group-id', 'Values': groupids }
-] )
-groups = list(sgi)
+groups = []
+if groupids:
+    #find id matches
+    sgi = ec2.security_groups.filter( Filters = [
+        {'Name': 'group-id', 'Values': groupids }
+    ] )
+    groups.extend(sgi)
 
 #find name matches
-sgi = ec2.security_groups.filter( Filters = [
-    {'Name': 'group-name', 'Values': groupnames}
-] )
-groups.extend(sgi)
+if groupnames:
+    sgi = ec2.security_groups.filter( Filters = [
+        {'Name': 'group-name', 'Values': groupnames}
+    ] )
+    groups.extend(sgi)
 
 for sg in groups:
     print "Clearing rules from group id: %s" % sg.group_id
